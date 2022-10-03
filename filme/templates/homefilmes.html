@@ -14,6 +14,14 @@ HomeFilmes Djangoflix
     <p>{{ filme.descricao }}</p>
     <img src="{{ filme.thumb.url }}">
     {% endfor %}
+<div class="py-10">
+    <h2>Novo</h2>
+    {{ lista_filmes_recentes }}
+</div>
+<div class="py-10">
+    <h2>Em alta</h2>
+    {{ lista_filmes_emalta }}
+</div>
 </div>
 {% endblock %}
 
