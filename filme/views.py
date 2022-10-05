@@ -15,7 +15,7 @@ class Detalhesfilme(DetailView):
     model = Filme
     #object -> 1 item do modelo
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # request possui método get e método post
         filme = self.get_object()  #descobrir qual filme ele está acessando
         filme.visualizacoes += 1  #somar 1 nas visualizações daquele filme
         filme.save()  #salvar
@@ -27,6 +27,20 @@ class Detalhesfilme(DetailView):
         filmes_relacionados = Filme.objects.filter(categoria=self.get_object().categoria)
         context["filmes_relacionados"] = filmes_relacionados
         return context
+
+class Pesquisafilme(ListView):
+    template_name = "pesquisa.html"
+    model = Filme
+
+    def get_queryset(self):  #edita o object list
+        termo_pesquisa = self.request.GET.get('query') #GET = tipo de requisição / get() = pegar um parametro da
+        # requisição
+        if termo_pesquisa:
+            object_list = self.model.objects.filter(titulo__icontains=termo_pesquisa)
+            return object_list
+        else:
+            return None
+
 
 
 #def homefilmes(request):
