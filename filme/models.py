@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 LISTA_CATEGORIAS = (
@@ -40,3 +41,7 @@ class Episodio(models.Model):
 
 
 # Criar usuário
+
+class Usuario(AbstractUser):     #Ja contem os campos de usuário padrão (Nome, sobrenome, email, etc)
+    filmes_vistos = models.ManyToManyField("Filme")
+
