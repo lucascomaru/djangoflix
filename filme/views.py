@@ -1,16 +1,23 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Filme
 from django.views.generic import TemplateView, ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 class Homepage(TemplateView):
     template_name = "homepage.html"
-class Homefilmes(ListView):
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('filme:homefilmes') #nome do app name dentro do arquivo URL
+        else:
+            return super().get(request, *args, **kwargs) # redireciona para a homepage
+class Homefilmes(LoginRequiredMixin, ListView):
     template_name = "homefilmes.html"
     model = Filme
     #object_list -> lista de itens do modelo
 
-class Detalhesfilme(DetailView):
+class Detalhesfilme(LoginRequiredMixin, DetailView):
     template_name = "detalhesfilme.html"
     model = Filme
     #object -> 1 item do modelo
@@ -19,6 +26,8 @@ class Detalhesfilme(DetailView):
         filme = self.get_object()  #descobrir qual filme ele está acessando
         filme.visualizacoes += 1  #somar 1 nas visualizações daquele filme
         filme.save()  #salvar
+        usuario = request.user
+        usuario.filmes_vistos.add(filme)
         return super().get(request, args, kwargs) # redireciona o usuário para o link final
 
     def get_context_data(self, **kwargs):
@@ -28,7 +37,7 @@ class Detalhesfilme(DetailView):
         context["filmes_relacionados"] = filmes_relacionados
         return context
 
-class Pesquisafilme(ListView):
+class Pesquisafilme(LoginRequiredMixin, ListView):
     template_name = "pesquisa.html"
     model = Filme
 
